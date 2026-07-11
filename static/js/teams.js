@@ -62,9 +62,11 @@
 
   if (addBtn) {
     addBtn.addEventListener('click', function () {
-      var name = (prompt('Team name:') || '').trim();
-      if (!name) return;
-      PCTE.createTeam(name).then(render).catch(function (err) { alert(err.message); });
+      PCTE.modal.prompt('Team name:').then(function (name) {
+        name = (name || '').trim();
+        if (!name) return;
+        return PCTE.createTeam(name).then(render).catch(function (err) { PCTE.modal.alert(err.message); });
+      });
     });
   }
 
@@ -76,16 +78,16 @@
     var name = input.value.trim();
     if (!name) return;
     var teamId = form.dataset.team;
-    PCTE.addPlayer(teamId, name).then(render).catch(function (err) { alert(err.message); });
+    PCTE.addPlayer(teamId, name).then(render).catch(function (err) { PCTE.modal.alert(err.message); });
   });
 
   listEl.addEventListener('click', function (e) {
     var delTeamBtn = e.target.closest('.delete-team');
     if (delTeamBtn) {
       var id = delTeamBtn.dataset.team;
-      if (confirm('Delete this team and its roster? This cannot be undone.')) {
-        PCTE.deleteTeam(id).then(render).catch(function (err) { alert(err.message); });
-      }
+      PCTE.modal.confirm('Delete this team and its roster? This cannot be undone.').then(function (ok) {
+        if (ok) return PCTE.deleteTeam(id).then(render).catch(function (err) { PCTE.modal.alert(err.message); });
+      });
       return;
     }
     var removeBtn = e.target.closest('.chip-remove');
@@ -93,7 +95,7 @@
       var teamId = removeBtn.dataset.team;
       var playerId = removeBtn.dataset.player;
       if (!playerId) return;
-      PCTE.removePlayer(teamId, playerId).then(render).catch(function (err) { alert(err.message); });
+      PCTE.removePlayer(teamId, playerId).then(render).catch(function (err) { PCTE.modal.alert(err.message); });
     }
   });
 

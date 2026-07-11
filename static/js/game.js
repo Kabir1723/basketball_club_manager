@@ -57,15 +57,15 @@
     PCTE.getTeams().then(function (teams) {
       PCTE.populateTeamSelect(team1Select, teams, 'Team 1');
       PCTE.populateTeamSelect(team2Select, teams, 'Team 2');
-    }).catch(function (err) { alert('Could not load teams: ' + err.message); });
+    }).catch(function (err) { PCTE.modal.alert('Could not load teams: ' + err.message); });
     if (scoreboard) scoreboard.classList.add('bento-section');
   });
 
   setupForm.addEventListener('submit', function (e) {
     e.preventDefault();
     var t1id = team1Select.value, t2id = team2Select.value;
-    if (!t1id || !t2id) { alert('Pick both teams first.'); return; }
-    if (t1id === t2id) { alert('Team 1 and Team 2 must be different.'); return; }
+    if (!t1id || !t2id) { PCTE.modal.alert('Pick both teams first.'); return; }
+    if (t1id === t2id) { PCTE.modal.alert('Team 1 and Team 2 must be different.'); return; }
 
     PCTE.getTeams().then(function (teams) {
       var t1 = teams.find(function (t) { return String(t.id) === String(t1id); });
@@ -85,7 +85,7 @@
       setupForm.style.display = 'none';
       liveStats.style.display = 'block';
       renderAll();
-    }).catch(function (err) { alert('Could not start game: ' + err.message); });
+    }).catch(function (err) { PCTE.modal.alert('Could not start game: ' + err.message); });
   });
 
   function playerRows(teamKey) {
@@ -183,22 +183,25 @@
   });
 
   endGameBtn.addEventListener('click', function () {
-    if (!confirm('End the game and save this result to history?')) return;
-    clearInterval(timerInterval);
-    timerRunning = false;
+    PCTE.modal.confirm('End the game and save this result to history?').then(function (ok) {
+      if (!ok) return;
+      clearInterval(timerInterval);
+      timerRunning = false;
 
-    var payload = {
-      startTime: state.startTime,
-      team1: state.team1,
-      team2: state.team2,
-      mvp: mvpSelect.value || ''
-    };
+      var payload = {
+        startTime: state.startTime,
+        team1: state.team1,
+        team2: state.team2,
+        mvp: mvpSelect.value || ''
+      };
 
-    PCTE.createResult(payload).then(function () {
-      alert('Game saved! Redirecting to Results.');
-      window.location.href = 'results.html';
-    }).catch(function (err) {
-      alert('Could not save result: ' + err.message);
+      PCTE.createResult(payload).then(function () {
+        return PCTE.modal.alert('Game saved! Redirecting to Results.');
+      }).then(function () {
+        window.location.href = 'results.html';
+      }).catch(function (err) {
+        PCTE.modal.alert('Could not save result: ' + err.message);
+      });
     });
   });
 })();

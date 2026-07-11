@@ -62,23 +62,23 @@
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var t1 = team1Select.value, t2 = team2Select.value;
-    if (!t1 || !t2) { alert('Pick both teams first.'); return; }
-    if (t1 === t2) { alert('Team 1 and Team 2 must be different.'); return; }
+    if (!t1 || !t2) { PCTE.modal.alert('Pick both teams first.'); return; }
+    if (t1 === t2) { PCTE.modal.alert('Team 1 and Team 2 must be different.'); return; }
     if (!dateInput.value) return;
 
     PCTE.createGame(t1, t2, dateInput.value).then(function () {
       form.reset();
       return render();
-    }).catch(function (err) { alert(err.message); });
+    }).catch(function (err) { PCTE.modal.alert(err.message); });
   });
 
   listEl.addEventListener('click', function (e) {
     var btn = e.target.closest('.delete-game');
     if (!btn) return;
     var id = btn.dataset.game;
-    if (confirm('Remove this fixture?')) {
-      PCTE.deleteGame(id).then(render).catch(function (err) { alert(err.message); });
-    }
+    PCTE.modal.confirm('Remove this fixture?').then(function (ok) {
+      if (ok) return PCTE.deleteGame(id).then(render).catch(function (err) { PCTE.modal.alert(err.message); });
+    });
   });
 
   document.addEventListener('DOMContentLoaded', function () {

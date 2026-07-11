@@ -46,8 +46,9 @@
     var btn = e.target.closest('.delete-btn');
     if (!btn) return;
     var id = btn.dataset.id;
-    if (!confirm('Delete this result? This cannot be undone.')) return;
-    PCTE.deleteResult(id).then(load).catch(function (err) { alert(err.message); });
+    PCTE.modal.confirm('Delete this result? This cannot be undone.').then(function (ok) {
+      if (ok) return PCTE.deleteResult(id).then(load).catch(function (err) { PCTE.modal.alert(err.message); });
+    });
   });
 
   document.addEventListener('DOMContentLoaded', load);

@@ -69,8 +69,9 @@
     }
 
     if (e.target.classList.contains('delete-user-btn')) {
-      if (!window.confirm('Delete this user account?')) return;
-      PCTE.deleteUser(userId).then(load).catch(function (err) { showError(err.message); });
+      PCTE.modal.confirm('Delete this user account?').then(function (ok) {
+        if (ok) return PCTE.deleteUser(userId).then(load).catch(function (err) { showError(err.message); });
+      });
     }
   });
 
