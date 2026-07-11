@@ -17,7 +17,24 @@
   </nav>
   <main>
     <h2>Live Game Tracker</h2>
-    <p class="viewer-mode-note">You're signed in as a viewer, so you can't start or run a live game.</p>
+    <p class="viewer-mode-note">You're signed in as a viewer — you can watch the score here, but only a coach or admin can start or run a game.</p>
+    <section id="viewerLiveGame" style="display:none;">
+      <p id="viewerEmptyState" class="empty-state">No live game in progress right now. Check back soon!</p>
+      <div id="viewerGameInfo" style="display:none;">
+        <div id="viewerInfo"></div>
+        <div id="viewerTimer">Q1 10:00</div>
+        <div class="scoreboard" id="viewerScoreboard">
+          <div>
+            <h3 id="viewerTeam1Name"></h3>
+            <p>Points: <span id="viewerTeam1Points">0</span> | Fouls: <span id="viewerTeam1Fouls">0</span></p>
+          </div>
+          <div>
+            <h3 id="viewerTeam2Name"></h3>
+            <p>Points: <span id="viewerTeam2Points">0</span> | Fouls: <span id="viewerTeam2Fouls">0</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
     <form id="gameSetup">
       <label>
         Team 1

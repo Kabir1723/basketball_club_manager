@@ -11,6 +11,7 @@ Then open http://127.0.0.1:5000/
 """
 
 import os
+import json
 import functools
 from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_login import (
@@ -20,7 +21,7 @@ from flask_login import (
     login_required,
     current_user,
 )
-from models import db, Team, Player, Game, Result, ResultPlayerFoul, User, ROLES
+from models import db, Team, Player, Game, Result, ResultPlayerFoul, User, LiveGame, ROLES
 
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
@@ -421,6 +422,81 @@ def delete_result(result_id):
     result = Result.query.get_or_404(result_id)
     db.session.delete(result)
     db.session.commit()
+    return jsonify({"ok": True})
+
+
+# ---------------------------------------------------------------------------
+# API: Live Game (shared tracker state)
+#
+# A single row (id=1) mirrors whatever game a coach/admin currently has open
+# in the Live Game tracker. Any logged-in user, including viewers, can read
+# it (GET) so they can watch scores update; only admins/coaches can write to
+# it. Cleared when the game is ended (or explicitly abandoned).
+# ---------------------------------------------------------------------------
+
+def _get_live_game_row(create=False):
+    row = db.session.get(LiveGame, 1)
+    if not row and create:
+        row = LiveGame(id=1, active=False)
+        db.session.add(row)
+        db.session.flush()
+    return row
+
+
+@app.route("/api/live-game", methods=["GET"])
+@login_required
+def get_live_game():
+    row = _get_live_game_row()
+    if not row:
+        return jsonify({"active": False})
+    return jsonify(row.to_dict())
+
+
+@app.route("/api/live-game", methods=["POST"])
+@editor_required
+def start_live_game():
+    data = request.get_json(force=True) or {}
+    state = data.get("state")
+    if not state:
+        return jsonify({"error": "state is required"}), 400
+
+    row = _get_live_game_row(create=True)
+    row.active = True
+    row.state_json = json.dumps(state)
+    row.timer_seconds_left = int(data.get("timerSecondsLeft") or 0)
+    row.timer_running = bool(data.get("timerRunning"))
+    db.session.commit()
+    return jsonify(row.to_dict()), 201
+
+
+@app.route("/api/live-game", methods=["PUT"])
+@editor_required
+def update_live_game():
+    row = _get_live_game_row()
+    if not row or not row.active:
+        return jsonify({"error": "No live game in progress"}), 404
+
+    data = request.get_json(force=True) or {}
+    if "state" in data and data["state"]:
+        row.state_json = json.dumps(data["state"])
+    if "timerSecondsLeft" in data:
+        row.timer_seconds_left = int(data.get("timerSecondsLeft") or 0)
+    if "timerRunning" in data:
+        row.timer_running = bool(data.get("timerRunning"))
+    db.session.commit()
+    return jsonify(row.to_dict())
+
+
+@app.route("/api/live-game", methods=["DELETE"])
+@editor_required
+def end_live_game():
+    row = _get_live_game_row()
+    if row:
+        row.active = False
+        row.state_json = None
+        row.timer_seconds_left = 0
+        row.timer_running = False
+        db.session.commit()
     return jsonify({"ok": True})
 
 

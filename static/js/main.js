@@ -74,6 +74,26 @@
     return request('/results/' + resultId, { method: 'DELETE' });
   };
 
+  /* ---------------- live game (shared tracker state) ---------------- */
+  PCTE.getLiveGame = function () {
+    return request('/live-game');
+  };
+  PCTE.startLiveGame = function (state, timerSecondsLeft, timerRunning) {
+    return request('/live-game', {
+      method: 'POST',
+      body: JSON.stringify({ state: state, timerSecondsLeft: timerSecondsLeft, timerRunning: timerRunning })
+    });
+  };
+  PCTE.updateLiveGame = function (state, timerSecondsLeft, timerRunning) {
+    return request('/live-game', {
+      method: 'PUT',
+      body: JSON.stringify({ state: state, timerSecondsLeft: timerSecondsLeft, timerRunning: timerRunning })
+    });
+  };
+  PCTE.endLiveGame = function () {
+    return request('/live-game', { method: 'DELETE' });
+  };
+
   /* ---------------- users (admin only) ---------------- */
   PCTE.getUsers = function () {
     return request('/users');
@@ -114,6 +134,20 @@
       '<option value="" disabled' + (current ? '' : ' selected') + '>' + (placeholder || 'Select team') + '</option>' +
       teams.map(function (t) { return '<option value="' + t.id + '">' + PCTE.escapeHtml(t.name) + '</option>'; }).join('');
     if (current && teams.some(function (t) { return String(t.id) === String(current); })) select.value = current;
+  };
+
+  // Resolves with the current user once auth.js has fetched it (or
+  // immediately if it already has). Pages that need to branch on role
+  // (e.g. showing an editor UI vs a read-only viewer UI) can await this
+  // instead of re-implementing the wait themselves.
+  PCTE.getCurrentUser = function () {
+    if (window.PCTE_USER) return Promise.resolve(window.PCTE_USER);
+    return new Promise(function (resolve) {
+      document.addEventListener('pcte:user-ready', function handler(e) {
+        document.removeEventListener('pcte:user-ready', handler);
+        resolve(e.detail);
+      });
+    });
   };
 
   window.PCTE = PCTE;

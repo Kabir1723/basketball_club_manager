@@ -11,9 +11,13 @@ Result             a completed game (final score / fouls / MVP)
 ResultPlayerFoul   per-player foul count captured at the end of a Result,
                    stored as a roster *snapshot* (by name) so history stays
                    intact even if the team/player is later renamed or deleted
+LiveGame           singleton row mirroring whatever game is currently open
+                   in the Live Game tracker, so viewers can watch scores
+                   update without being able to run the tracker themselves
 """
 
 from datetime import datetime
+import json
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -169,3 +173,31 @@ class ResultPlayerFoul(db.Model):
     side = db.Column(db.String(5), nullable=False)  # 'team1' or 'team2'
     player_name = db.Column(db.String(80), nullable=False)
     fouls = db.Column(db.Integer, default=0)
+
+
+class LiveGame(db.Model):
+    """Singleton row holding whatever game the Live Game tracker currently
+    has open, so viewers can watch along in (near-)real time. A coach/admin
+    pushes the whole tracker state here on every score/foul/timer change;
+    viewers just poll GET /api/live-game and render it read-only. Cleared
+    (active=False) when the game is ended or abandoned."""
+
+    __tablename__ = "live_game"
+
+    id = db.Column(db.Integer, primary_key=True)
+    active = db.Column(db.Boolean, default=False, nullable=False)
+    state_json = db.Column(db.Text, nullable=True)  # JSON: {startTime, quarter, quarterMinutes, team1, team2}
+    timer_seconds_left = db.Column(db.Integer, default=0)
+    timer_running = db.Column(db.Boolean, default=False)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    def to_dict(self):
+        if not self.active or not self.state_json:
+            return {"active": False}
+        return {
+            "active": True,
+            "state": json.loads(self.state_json),
+            "timerSecondsLeft": self.timer_seconds_left or 0,
+            "timerRunning": bool(self.timer_running),
+            "updatedAt": self.updated_at.isoformat() if self.updated_at else None,
+        }

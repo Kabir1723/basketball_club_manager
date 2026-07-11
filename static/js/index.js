@@ -10,16 +10,6 @@
 
   grid.classList.add('card-grid', 'bento-section', 'quicklinks');
 
-  function getUser() {
-    if (window.PCTE_USER) return Promise.resolve(window.PCTE_USER);
-    return new Promise(function (resolve) {
-      document.addEventListener('pcte:user-ready', function handler(e) {
-        document.removeEventListener('pcte:user-ready', handler);
-        resolve(e.detail);
-      });
-    });
-  }
-
   function render(teams, schedule, results, user) {
     var upcoming = schedule.filter(function (g) { return new Date(g.datetime) >= new Date(); }).length;
     var lastResult = results[results.length - 1];
@@ -50,7 +40,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    Promise.all([PCTE.getTeams(), PCTE.getSchedule(), PCTE.getResults(), getUser()])
+    Promise.all([PCTE.getTeams(), PCTE.getSchedule(), PCTE.getResults(), PCTE.getCurrentUser()])
       .then(function (values) { render(values[0], values[1], values[2], values[3]); })
       .catch(function (err) {
         grid.innerHTML = '<p class="empty-state">Could not load dashboard data: ' + PCTE.escapeHtml(err.message) + '</p>';
