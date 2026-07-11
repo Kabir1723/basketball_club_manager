@@ -15,11 +15,6 @@ automatically on first run (in the project folder). The whole site now
 requires logging in; a default admin account is created automatically the
 first time you run the app:
 
-```
-username: admin
-password: admin123
-```
-
 **Log in and change this password right away** (Users page → Reset
 Password), or create a new admin account and delete the default one.
 
