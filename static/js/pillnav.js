@@ -11,7 +11,7 @@
 
   var ITEMS = [
     { label: 'Dashboard', href: 'index.html' },
-    { label: 'Teams', href: 'teams.html' },
+    { label: 'Teams', href: 'teams.html', roles: 'admin coach' },
     { label: 'Schedule', href: 'schedule.html' },
     { label: 'Live Game', href: 'live-game.html' },
     { label: 'Results', href: 'results.html' },
@@ -43,7 +43,7 @@
             '<ul class="pill-list" role="menubar">' +
               ITEMS.map(function (item, i) {
                 return '<li role="none">' +
-                  '<a role="menuitem" href="' + item.href + '" class="pill' + (item.href === active ? ' is-active' : '') + '" data-idx="' + i + '">' +
+                  '<a role="menuitem" href="' + item.href + '" class="pill' + (item.href === active ? ' is-active' : '') + '" data-idx="' + i + '"' + (item.roles ? ' data-requires-role="' + item.roles + '"' : '') + '>' +
                     '<span class="hover-circle" aria-hidden="true"></span>' +
                     '<span class="label-stack">' +
                       '<span class="pill-label">' + item.label + '</span>' +
@@ -62,7 +62,7 @@
         '<div class="mobile-menu-popover mobile-only">' +
           '<ul class="mobile-menu-list">' +
             ITEMS.map(function (item) {
-              return '<li><a href="' + item.href + '" class="mobile-menu-link' + (item.href === active ? ' is-active' : '') + '">' + item.label + '</a></li>';
+              return '<li><a href="' + item.href + '" class="mobile-menu-link' + (item.href === active ? ' is-active' : '') + '"' + (item.roles ? ' data-requires-role="' + item.roles + '"' : '') + '>' + item.label + '</a></li>';
             }).join('') +
           '</ul>' +
         '</div>' +

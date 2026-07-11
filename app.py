@@ -111,6 +111,18 @@ def editor_required(view):
     return wrapped
 
 
+def editor_page_required(view):
+    # Same role check as editor_required, but for HTML page routes: send
+    # viewers back to the dashboard instead of returning a bare JSON 403.
+    @functools.wraps(view)
+    @login_required
+    def wrapped(*args, **kwargs):
+        if not current_user.can_edit:
+            return redirect(url_for("index"))
+        return view(*args, **kwargs)
+    return wrapped
+
+
 def admin_required(view):
     @functools.wraps(view)
     @login_required
@@ -233,7 +245,7 @@ def index():
 
 
 @app.route("/teams.html")
-@login_required
+@editor_page_required
 def teams_page():
     return render_template("teams.html")
 
