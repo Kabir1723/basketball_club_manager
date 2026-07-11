@@ -63,15 +63,6 @@ body::before{
   height:100%;
   pointer-events:none;
 }
-#galaxy-bg{
-  position:fixed;
-  inset:0;
-  z-index:-1;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-  mix-blend-mode:screen;
-}
 nav{position:relative;z-index:50;}
 main, footer{position:relative;z-index:1;}
 
