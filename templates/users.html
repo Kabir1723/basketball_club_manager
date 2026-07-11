@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Users - PCTE Basketball Club Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <nav>
+    <h1 class="shiny-text">PCTE Basketball Club Manager</h1>
+    <p class="owner">Owned by Mr. President Kabir</p>
+    <div id="pillNavRoot"></div>
+  </nav>
+  <main>
+    <h2>User Accounts</h2>
+    <p class="page-note">Admins control who can make changes. Coaches can edit teams, schedules, live games, and results. Viewers can only look around.</p>
+
+    <form id="createUserForm">
+      <label>
+        Username
+        <input type="text" id="newUsername" required />
+      </label>
+      <label>
+        Password
+        <input type="password" id="newPassword" required />
+      </label>
+      <label>
+        Role
+        <select id="newRole">
+          <option value="viewer">Viewer</option>
+          <option value="coach">Coach</option>
+          <option value="admin">Admin</option>
+        </select>
+      </label>
+      <button type="submit">Add User</button>
+    </form>
+    <p id="formError" style="color:#ff6b6b; display:none;"></p>
+
+    <h3>Existing Accounts</h3>
+    <div class="table-scroll">
+      <table id="usersTable">
+        <thead>
+          <tr>
+            <th>Username</th>
+            <th>Role</th>
+            <th>Change Role</th>
+            <th>Reset Password</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </main>
+  <script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="{{ url_for('static', filename='js/ferrofluid.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/magicbento.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/pillnav.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/users.js') }}"></script>
+</body>
+</html>

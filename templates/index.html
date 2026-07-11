@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PCTE Basketball Club Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <nav>
+    <h1 class="shiny-text">PCTE Basketball Club Manager</h1>
+    <p class="owner">Owned by Mr. President Kabir</p>
+    <div id="pillNavRoot"></div>
+  </nav>
+  <main>
+    <h2>Welcome to the Club!</h2>
+    <p>An NBA-inspired platform for managing basketball teams and tracking real-time games — built for the PCTE College basketball community.</p>
+
+    <div style="max-width: 700px; margin: 0 auto 2em; font-size: 1.05rem; line-height: 1.6;">
+      <p>Whether you're a player, coach, or fan, everything you need lives in one place:</p>
+      <ul style="list-style:none; padding-left:0;">
+        <li>👥 <strong>Create and manage teams</strong> and their rosters</li>
+        <li>📅 <strong>Schedule games</strong> with a simple calendar form</li>
+        <li>🔥 <strong>Track live action</strong> — scoring, fouls, quarters, and MVP</li>
+        <li>📊 <strong>Review past games</strong> with full result history</li>
+      </ul>
+    </div>
+
+    <h2>Quick Access</h2>
+    <div id="dashboardGrid"><!-- cards injected by index.js --></div>
+  </main>
+  <script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="{{ url_for('static', filename='js/ferrofluid.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/magicbento.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/pillnav.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Teams - PCTE Basketball Club Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <nav>
+    <h1 class="shiny-text">PCTE Basketball Club Manager</h1>
+    <p class="owner">Owned by Mr. President Kabir</p>
+    <div id="pillNavRoot"></div>
+  </nav>
+  <main>
+    <h2>Teams &amp; Players</h2>
+    <p class="page-note">Every card glows and reacts to your cursor — hover to see it, click to add a player.</p>
+    <p class="viewer-mode-note">You're signed in as a viewer, so this page is read-only.</p>
+    <button id="addTeamBtn">Add Team</button>
+    <div id="teamsList"></div>
+  </main>
+  <script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="{{ url_for('static', filename='js/ferrofluid.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/magicbento.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/pillnav.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/teams.js') }}"></script>
+</body>
+</html>

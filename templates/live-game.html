@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Live Game - PCTE Basketball Club Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <nav>
+    <h1 class="shiny-text">PCTE Basketball Club Manager</h1>
+    <p class="owner">Owned by Mr. President Kabir</p>
+    <div id="pillNavRoot"></div>
+  </nav>
+  <main>
+    <h2>Live Game Tracker</h2>
+    <p class="viewer-mode-note">You're signed in as a viewer, so you can't start or run a live game.</p>
+    <form id="gameSetup">
+      <label>
+        Team 1
+        <select id="team1Select"></select>
+      </label>
+      <label>
+        Team 2
+        <select id="team2Select"></select>
+      </label>
+      <label>
+        Quarter Length (minutes)
+        <input type="number" id="quarterLength" min="1" max="60" step="1" value="10" required />
+      </label>
+      <button type="submit">Start Game</button>
+    </form>
+    <section id="liveStats" style="display:none;">
+      <div id="gameInfo"></div>
+      <div id="timer">Q1 10:00</div>
+      <div>
+        <button id="startTimerBtn">Start Timer</button>
+        <button id="stopTimerBtn" class="secondary">Stop Timer</button>
+      </div>
+      <div class="scoreboard" id="scoreboard">
+        <div>
+          <h3 id="team1Name"></h3>
+          <p>Points: <span id="team1Points">0</span> | Fouls: <span id="team1Fouls">0</span></p>
+          <div id="team1Players"></div>
+        </div>
+        <div>
+          <h3 id="team2Name"></h3>
+          <p>Points: <span id="team2Points">0</span> | Fouls: <span id="team2Fouls">0</span></p>
+          <div id="team2Players"></div>
+        </div>
+      </div>
+      <div id="controls">
+        <button id="addPointTeam1">+1 Point Team 1</button>
+        <button id="addFoulTeam1" class="secondary">+1 Foul Team 1</button>
+        <button id="addPointTeam2">+1 Point Team 2</button>
+        <button id="addFoulTeam2" class="secondary">+1 Foul Team 2</button>
+      </div>
+      <label>
+        Current Quarter
+        <select id="quarterSelect">
+          <option value="1">Q1</option>
+          <option value="2">Q2</option>
+          <option value="3">Q3</option>
+          <option value="4">Q4</option>
+        </select>
+      </label>
+      <label>
+        Quarter Length (minutes)
+        <input type="number" id="quarterLengthLive" min="1" max="60" step="1" value="10" />
+      </label>
+      <button type="button" id="applyQuarterLength" class="secondary">Apply Length</button>
+      <label>
+        Select MVP
+        <select id="mvpSelect"></select>
+      </label>
+      <button id="endGameBtn" class="danger">End Game</button>
+    </section>
+  </main>
+  <script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="{{ url_for('static', filename='js/ferrofluid.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/magicbento.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/pillnav.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/game.js') }}"></script>
+</body>
+</html>

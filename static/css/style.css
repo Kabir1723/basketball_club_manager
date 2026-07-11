@@ -1,0 +1,684 @@
+/* =========================================================================
+   PCTE Basketball Club Manager — stylesheet
+   Premium black / glowing-purple / white palette. Card system below ports
+   the MagicBento glow/spotlight component to the club's own accent color,
+   with a Ferrofluid glow sitting behind everything.
+   ========================================================================= */
+
+:root{
+  /* "Blaze" palette — courtside-at-night: charcoal-black court, fire-orange
+     blaze as the primary hype color, electric buzzer-yellow as the glow/
+     secondary. Swapped from the old purple/Syne look to something that reads
+     like a jersey and a shot clock, not a generic dark-mode template. */
+  --bg:#0b0705;
+  --surface:#170d08;
+  --card:#170d08;
+  --text:#fff6ec;
+  --muted:#c9a88b;
+  --border:#3a2114;
+  --accent:#ff4b1f;
+  --accent-rgb:255,75,31;
+  --accent-2:#ffd23f;
+  --accent-2-rgb:255,210,63;
+  --success:#9eff00;
+  --danger:#ff2e63;
+  --danger-rgb:255,46,99;
+  --radius:16px;
+  --font-display:'Anton',sans-serif;
+  --font-body:'Space Grotesk',sans-serif;
+  --font-mono:'Rajdhani',sans-serif;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  color:var(--text);
+  font-family:var(--font-body);
+  transition:color .3s ease;
+  -webkit-font-smoothing:antialiased;
+  position:relative;
+}
+/* kept separate from body's own background so a fixed, negative-z-index
+   canvas (Ferrofluid) can sit between this and the page content — browsers
+   otherwise promote body's background to the viewport, ignoring z-index */
+body::before{
+  content:'';
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  background:var(--bg);
+}
+#ferro-bg{
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+nav{position:relative;z-index:50;}
+main, footer{position:relative;z-index:1;}
+
+h1,h2,h3{
+  font-family:var(--font-display);
+  font-weight:600;
+  letter-spacing:.01em;
+  margin:0 0 .4em;
+}
+
+p{line-height:1.6;}
+
+a{color:inherit;}
+
+button{
+  font-family:var(--font-body);
+  cursor:pointer;
+}
+
+/* ---------- NAV ---------- */
+nav{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:1.5em 2em 1.25em;
+  text-align:center;
+  position:relative;
+  transition:background .3s ease, border-color .3s ease;
+}
+nav h1{
+  font-family:var(--font-display);
+  font-weight:800;
+  font-size:clamp(1.4rem,3vw,2.1rem);
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  margin:.5em 0 .1em;
+}
+/* ---------- SHINY TEXT (React Bits ShinyText, CSS-only port) ----------
+   A soft highlight sweeps across the text on a loop. No JS/motion needed —
+   it's just an animated background-position on a clipped gradient. */
+.shiny-text{
+  display:inline-block;
+  background-image:linear-gradient(120deg,
+    var(--text) 0%, var(--text) 35%,
+    var(--accent-2, #ffd23f) 50%,
+    var(--text) 65%, var(--text) 100%);
+  background-size:200% auto;
+  background-position:150% center;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  color:transparent;
+  animation:shiny-sweep 2.6s linear infinite;
+}
+@keyframes shiny-sweep{
+  0%{background-position:150% center;}
+  100%{background-position:-50% center;}
+}
+nav .owner{
+  margin:0 0 1em;
+  font-size:.8rem;
+  color:var(--muted);
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+/* ---------- PILL NAV (React Bits PillNav, vanilla port) ---------- */
+#pillNavRoot{
+  display:flex;
+  justify-content:center;
+  margin:.3em 0 .5em;
+}
+.pill-nav-wrap{position:relative;display:flex;justify-content:center;width:100%;}
+.pill-nav{
+  --nav-h:44px;
+  --logo:34px;
+  --pill-pad-x:1.15em;
+  --pill-gap:4px;
+  --base:var(--card);
+  --pill-bg:var(--accent);
+  --hover-text:var(--text);
+  --pill-text:#1a0d02;
+  width:max-content;
+  max-width:100%;
+  display:flex;
+  align-items:center;
+  gap:.5em;
+  padding:.3em;
+  border:1px solid var(--border);
+  border-radius:9999px;
+  background:rgba(255,255,255,.02);
+  box-shadow:0 0 0 1px rgba(var(--accent-rgb),.08), 0 8px 24px rgba(0,0,0,.35);
+}
+@media (max-width:768px){
+  .pill-nav{width:100%;justify-content:space-between;padding:.3em .4em;}
+}
+.pill-logo{
+  width:var(--nav-h);height:var(--nav-h);
+  border-radius:50%;
+  background:var(--base);
+  border:1px solid var(--border);
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:7px;
+  flex-shrink:0;
+}
+.pill-logo svg{width:100%;height:100%;display:block;}
+.pill-nav-items{
+  display:flex;align-items:center;height:var(--nav-h);
+  background:var(--base);
+  border-radius:9999px;
+}
+.pill-list{
+  list-style:none;display:flex;align-items:stretch;gap:var(--pill-gap);
+  margin:0;padding:3px;height:100%;
+}
+.pill-list > li{display:flex;height:100%;}
+.pill{
+  display:inline-flex;align-items:center;justify-content:center;
+  height:100%;padding:0 var(--pill-pad-x);
+  background:var(--pill-bg);
+  color:var(--pill-text);
+  text-decoration:none;
+  border-radius:9999px;
+  font-family:var(--font-display);
+  font-weight:400;
+  font-size:.82rem;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+  white-space:nowrap;
+  cursor:pointer;
+  position:relative;
+  overflow:hidden;
+  opacity:.62;
+  transition:opacity .2s ease;
+}
+.pill:hover{opacity:1;}
+.pill.is-active{opacity:1;box-shadow:0 0 20px rgba(var(--accent-rgb),.6);}
+.pill .hover-circle{
+  position:absolute;left:50%;bottom:0;
+  border-radius:50%;
+  background:var(--base);
+  z-index:1;display:block;pointer-events:none;will-change:transform;
+}
+.pill .label-stack{position:relative;display:inline-block;line-height:1;z-index:2;}
+.pill .pill-label{position:relative;z-index:2;display:inline-block;line-height:1;will-change:transform;}
+.pill .pill-label-hover{
+  position:absolute;left:0;top:0;
+  color:var(--hover-text);
+  z-index:3;display:inline-block;will-change:transform,opacity;
+}
+.desktop-only{display:block;}
+.mobile-only{display:none;}
+@media (max-width:768px){
+  .desktop-only{display:none;}
+  .mobile-only{display:block;}
+}
+.mobile-menu-button{
+  width:var(--nav-h);height:var(--nav-h);
+  border-radius:50%;
+  background:var(--accent);
+  border:none;
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  gap:4px;cursor:pointer;padding:0;position:relative;flex-shrink:0;
+}
+@media (max-width:768px){.mobile-menu-button{display:flex;}}
+.hamburger-line{
+  width:16px;height:2px;background:#1a0d02;border-radius:1px;
+  transform-origin:center;
+}
+.mobile-menu-backdrop{
+  position:fixed;inset:0;
+  background:rgba(0,0,0,.55);
+  z-index:997;
+  opacity:0;
+  visibility:hidden;
+  transition:opacity .2s ease;
+}
+.mobile-menu-popover{
+  position:absolute;top:calc(var(--nav-h) + .6em);left:1rem;right:1rem;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:20px;
+  box-shadow:0 8px 32px rgba(0,0,0,.4);
+  z-index:998;
+  opacity:0;
+  visibility:hidden;
+  transform-origin:top center;
+}
+.mobile-menu-list{
+  list-style:none;margin:0;padding:6px;display:flex;flex-direction:column;gap:4px;
+}
+.mobile-menu-popover .mobile-menu-link{
+  display:block;padding:.75em 1em;
+  color:var(--text);
+  background:transparent;
+  text-decoration:none;
+  font-family:var(--font-display);
+  font-size:.85rem;
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  border-radius:12px;
+  transition:all .2s ease;
+}
+.mobile-menu-popover .mobile-menu-link:hover,
+.mobile-menu-popover .mobile-menu-link.is-active{
+  background:var(--accent);
+  color:#1a0d02;
+}
+/* ---------- MAIN LAYOUT ---------- */
+main{
+  max-width:1100px;
+  margin:0 auto;
+  padding:2.5em 1.5em 5em;
+}
+main > h2{
+  font-size:1.6rem;
+  margin-bottom:.75em;
+}
+.empty-state{
+  color:var(--muted);
+  font-style:italic;
+  padding:2em 0;
+  text-align:center;
+}
+
+/* ---------- BUTTONS ---------- */
+.btn,
+button:not(.icon-btn){
+  font-family:var(--font-display);
+  font-size:.85rem;
+  letter-spacing:.03em;
+  padding:.65em 1.3em;
+  border-radius:10px;
+  border:1px solid var(--accent);
+  background:var(--accent);
+  color:#fff;
+  transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+}
+button:not(.icon-btn):hover{
+  transform:translateY(-1px);
+  box-shadow:0 6px 18px rgba(var(--accent-rgb),.35);
+}
+button:not(.icon-btn):active{transform:translateY(0);}
+button.secondary{
+  background:transparent;
+  color:var(--accent);
+}
+button.danger{
+  background:var(--danger);
+  border-color:var(--danger);
+}
+.icon-btn{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--muted);
+  border-radius:8px;
+  width:2em;height:2em;
+  font-size:.85rem;
+  line-height:1;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .2s ease;
+}
+.icon-btn:hover{border-color:var(--danger);color:var(--danger);}
+
+/* ---------- FORMS ---------- */
+form{
+  display:flex;
+  flex-wrap:wrap;
+  gap:1em;
+  align-items:flex-end;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.25em;
+  margin-bottom:1.5em;
+}
+label{
+  display:flex;
+  flex-direction:column;
+  gap:.4em;
+  font-size:.78rem;
+  color:var(--muted);
+  letter-spacing:.03em;
+  text-transform:uppercase;
+  flex:1;
+  min-width:160px;
+  margin-bottom:1em;
+}
+form label{margin-bottom:0;}
+input,select{
+  font-family:var(--font-body);
+  font-size:.95rem;
+  padding:.6em .75em;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:var(--bg);
+  color:var(--text);
+}
+input:focus,select:focus,button:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:2px;
+}
+.add-player-form{
+  padding:0;
+  border:none;
+  margin:.75em 0 0;
+  background:none;
+  gap:.5em;
+}
+.add-player-form input{flex:1;min-width:0;padding:.45em .6em;font-size:.82rem;}
+.add-player-form button{padding:.45em .8em;}
+
+/* ---------- BENTO CARD SYSTEM (ported from MagicBento) ---------- */
+.bento-section{position:relative;user-select:none;}
+.card-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:.85em;
+}
+@media (min-width:600px){.card-grid{grid-template-columns:repeat(2,1fr);}}
+@media (min-width:1000px){.card-grid{grid-template-columns:repeat(3,1fr);}}
+.card-grid.quicklinks{max-width:1100px;}
+
+.magic-bento-card{
+  position:relative;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  min-height:190px;
+  padding:1.35em;
+  border-radius:var(--radius);
+  border:1px solid var(--border);
+  background:var(--card);
+  overflow:hidden;
+  transition:transform .3s ease, box-shadow .3s ease;
+  --glow-x:50%;--glow-y:50%;--glow-intensity:0;--glow-radius:220px;
+  --glow-color:var(--accent-2-rgb);
+}
+.magic-bento-card:hover{transform:translateY(-3px);box-shadow:0 10px 26px rgba(0,0,0,.12);}
+.magic-bento-card__header,.magic-bento-card__content{position:relative;z-index:2;display:flex;}
+.magic-bento-card__header{justify-content:space-between;align-items:flex-start;gap:.75em;margin-bottom:.75em;}
+.magic-bento-card__content{flex-direction:column;flex:1;}
+.magic-bento-card__label{
+  font-family:var(--font-mono);
+  font-size:.68rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+  border:1px solid var(--border);
+  padding:.3em .6em;
+  border-radius:999px;
+  white-space:nowrap;
+}
+.magic-bento-card__title{
+  font-size:1.25rem;
+  margin:0 0 .3em;
+}
+.magic-bento-card__description{
+  font-size:.85rem;
+  color:var(--muted);
+  margin:0;
+  line-height:1.45;
+}
+.magic-bento-card--text-autohide .magic-bento-card__title{
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:1;overflow:hidden;
+}
+
+.magic-bento-card--border-glow::after{
+  content:'';
+  position:absolute;inset:0;padding:5px;
+  background:radial-gradient(var(--glow-radius) circle at var(--glow-x) var(--glow-y),
+    rgba(var(--glow-color), calc(var(--glow-intensity) * .75)) 0%,
+    rgba(var(--glow-color), calc(var(--glow-intensity) * .35)) 30%,
+    transparent 60%);
+  border-radius:inherit;
+  -webkit-mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite:xor;
+  mask:linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite:exclude;
+  pointer-events:none;
+  z-index:1;
+}
+.magic-bento-card--border-glow:hover{
+  box-shadow:0 4px 20px rgba(0,0,0,.15), 0 0 30px rgba(var(--glow-color),.22);
+}
+.particle{position:absolute;pointer-events:none;z-index:5;}
+.global-spotlight{
+  position:fixed;
+  width:800px;height:800px;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:400;
+  opacity:0;
+  transform:translate(-50%,-50%);
+  mix-blend-mode:screen;
+  background:radial-gradient(circle,
+    rgba(var(--accent-rgb),.4) 0%,
+    rgba(var(--accent-rgb),.16) 32%,
+    transparent 70%);
+}
+
+/* quick link cards on the dashboard */
+.quicklink-card{text-decoration:none;color:inherit;cursor:pointer;}
+.quicklink-icon{font-size:1.6rem;margin-bottom:.3em;}
+
+/* stat card on the dashboard */
+.stat-value{
+  font-family:var(--font-display);
+  font-size:2.2rem;
+  color:var(--accent);
+}
+.stat-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+
+/* ---------- TEAM ROSTER ---------- */
+.roster-list{
+  list-style:none;
+  margin:0 0 .25em;
+  padding:0;
+  font-size:.85rem;
+  max-height:150px;
+  overflow-y:auto;
+}
+.roster-list li{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:.3em 0;
+  border-bottom:1px dashed var(--border);
+}
+.roster-list li:last-child{border-bottom:none;}
+.roster-list li.muted{color:var(--muted);font-style:italic;}
+.chip-remove{
+  background:none;border:none;color:var(--muted);
+  cursor:pointer;font-size:.85rem;padding:0 .2em;
+}
+.chip-remove:hover{color:var(--danger);}
+
+/* ---------- SCHEDULE ---------- */
+#gamesList .magic-bento-card__title{font-size:1.05rem;}
+.game-chip-time{
+  font-family:var(--font-mono);
+  font-size:.75rem;
+  color:var(--accent);
+}
+
+/* ---------- LIVE GAME ---------- */
+#timer{
+  font-family:var(--font-mono);
+  font-size:2.4rem;
+  text-align:center;
+  padding:.4em 0;
+  color:var(--accent);
+  letter-spacing:.03em;
+}
+.scoreboard{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:1.25em;
+  margin:1.5em 0;
+}
+@media (max-width:640px){.scoreboard{grid-template-columns:1fr;}}
+.scoreboard > div{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:1.25em;
+}
+.scoreboard h3{font-size:1.2rem;margin-bottom:.3em;}
+.scoreboard p{margin:.2em 0 .8em;font-family:var(--font-mono);font-size:.85rem;color:var(--muted);}
+.player-row{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:.4em 0;
+  border-bottom:1px dashed var(--border);
+  font-size:.85rem;
+}
+.player-row:last-child{border-bottom:none;}
+.player-row button{
+  font-size:.7rem;
+  padding:.3em .6em;
+}
+#controls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.75em;
+  margin:1em 0;
+}
+#gameInfo{
+  text-align:center;
+  font-family:var(--font-mono);
+  color:var(--muted);
+  font-size:.85rem;
+  margin-bottom:.5em;
+}
+
+/* ---------- TABLE (history) ---------- */
+.table-scroll{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+}
+table{
+  width:100%;
+  min-width:720px;
+  border-collapse:collapse;
+  background:var(--card);
+  font-size:.85rem;
+}
+thead{background:rgba(var(--accent-rgb),.08);}
+th,td{
+  padding:.75em .9em;
+  text-align:left;
+  border-bottom:1px solid var(--border);
+  vertical-align:top;
+}
+tbody tr{transition:background .15s ease;}
+tbody tr:hover{background:rgba(var(--accent-rgb),.06);}
+tbody tr:last-child td{border-bottom:none;}
+.delete-btn{
+  background:transparent;
+  border:1px solid var(--danger);
+  color:var(--danger);
+  font-size:.75rem;
+  padding:.4em .7em;
+}
+.delete-btn:hover{background:var(--danger);color:#fff;}
+
+/* ---------- FOOTER / MISC ---------- */
+.page-note{color:var(--muted);font-size:.85rem;margin-top:-.5em;margin-bottom:1.5em;}
+
+/* ---------- MOBILE ----------
+   Tightens spacing, grows tap targets, and keeps forms/buttons usable
+   one-handed on phones. .card-grid, .scoreboard, and the PillNav already
+   have their own breakpoints above — this covers everything else. */
+html{overflow-x:hidden;}
+body{overflow-x:hidden;}
+
+@media (max-width:640px){
+  nav{padding:1.1em 1em .9em;}
+  main{padding:1.75em 1em 3.5em;}
+  main > h2{font-size:1.35rem;}
+
+  form{padding:1em;gap:.85em;}
+  label{min-width:0;flex-basis:100%;}
+
+  .btn,
+  button:not(.icon-btn){
+    padding:.75em 1.2em;
+    min-height:44px;
+  }
+  .icon-btn{width:2.4em;height:2.4em;font-size:.95rem;}
+  .chip-remove{padding:.4em .3em;font-size:1rem;}
+
+  #controls{gap:.6em;}
+  #controls button{flex:1 1 calc(50% - .6em);min-height:44px;}
+
+  .player-row button{padding:.5em .8em;font-size:.75rem;}
+
+  #timer{font-size:1.9rem;}
+
+  table{min-width:640px;font-size:.8rem;}
+  th,td{padding:.6em .7em;}
+}
+
+@media (max-width:400px){
+  nav h1{font-size:1.2rem;}
+  .magic-bento-card{padding:1.1em;min-height:auto;}
+  #controls button{flex:1 1 100%;}
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001ms !important;transition-duration:.001ms !important;}
+}
+
+/* ---------- AUTH: signed-in status + logout control ---------- */
+.auth-status{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:.75em;
+  flex-wrap:wrap;
+  margin:.4em 0 0;
+  font-size:.8rem;
+  color:var(--muted);
+}
+.auth-status strong{color:var(--text);}
+.auth-status .auth-logout-btn{
+  padding:.35em .9em;
+  font-size:.75rem;
+}
+
+/* ---------- VIEWER MODE: hide every write control for read-only users ---------- */
+body.viewer-mode #addTeamBtn,
+body.viewer-mode .delete-team,
+body.viewer-mode .chip-remove,
+body.viewer-mode .add-player-form,
+body.viewer-mode #scheduleForm,
+body.viewer-mode .delete-game,
+body.viewer-mode .delete-btn,
+body.viewer-mode #gameSetup,
+body.viewer-mode #createUserForm{
+  display:none !important;
+}
+body.viewer-mode #liveStats{
+  opacity:.6;
+}
+body.viewer-mode #controls,
+body.viewer-mode #startTimerBtn,
+body.viewer-mode #stopTimerBtn,
+body.viewer-mode #applyQuarterLength,
+body.viewer-mode #endGameBtn,
+body.viewer-mode #quarterSelect,
+body.viewer-mode #quarterLengthLive,
+body.viewer-mode #mvpSelect{
+  display:none;
+}
+.viewer-mode-note{
+  color:var(--muted);
+  font-size:.9rem;
+  display:none;
+}
+body.viewer-mode .viewer-mode-note{display:block;}

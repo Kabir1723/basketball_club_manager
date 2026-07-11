@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Schedule - PCTE Basketball Club Manager</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+  <nav>
+    <h1 class="shiny-text">PCTE Basketball Club Manager</h1>
+    <p class="owner">Owned by Mr. President Kabir</p>
+    <div id="pillNavRoot"></div>
+  </nav>
+  <main>
+    <h2>Game Schedule</h2>
+    <p class="viewer-mode-note">You're signed in as a viewer, so this page is read-only.</p>
+    <form id="scheduleForm">
+      <label>
+        Team 1
+        <select id="team1Select"></select>
+      </label>
+      <label>
+        Team 2
+        <select id="team2Select"></select>
+      </label>
+      <label>
+        Date &amp; Time
+        <input type="datetime-local" id="gameDateTime" required />
+      </label>
+      <button type="submit">Add Game</button>
+    </form>
+    <h3>Upcoming Games</h3>
+    <ul id="gamesList"></ul>
+  </main>
+  <script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="{{ url_for('static', filename='js/ferrofluid.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/magicbento.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/pillnav.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/schedule.js') }}"></script>
+</body>
+</html>
