@@ -29,15 +29,27 @@ app = Flask(__name__)
 # ---------------------------------------------------------------------------
 # Database configuration
 #
-# Defaults to a local SQLite file (database.db). To use MySQL instead, set
-# the DATABASE_URL environment variable before running, e.g.:
+# Defaults to a local SQLite file (database.db). On Render, set DATABASE_URL
+# to a Postgres connection string (Render's free Postgres add-on provides
+# one automatically as an env var you can link to this service) — SQLite
+# alone isn't safe on Render because its filesystem is wiped on every
+# redeploy, so anything saved to a plain SQLite file will be lost.
+#
+#   export DATABASE_URL="postgresql://user:password@host/dbname"
+#
+# For local MySQL instead:
 #
 #   export DATABASE_URL="mysql+pymysql://user:password@localhost/pcte_basketball"
 #
-# (requires `pip install pymysql`, already listed in requirements.txt)
+# (drivers for both are already listed in requirements.txt)
 # ---------------------------------------------------------------------------
 default_sqlite_uri = "sqlite:///" + os.path.join(BASE_DIR, "database.db")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get("DATABASE_URL", default_sqlite_uri)
+database_url = os.environ.get("DATABASE_URL", default_sqlite_uri)
+# Render (and some other hosts) hand out "postgres://" URLs, but modern
+# SQLAlchemy requires the "postgresql://" scheme — normalize it here.
+if database_url.startswith("postgres://"):
+    database_url = database_url.replace("postgres://", "postgresql://", 1)
+app.config["SQLALCHEMY_DATABASE_URI"] = database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # Used to sign the session cookie. Set SECRET_KEY in your environment for

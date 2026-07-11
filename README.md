@@ -51,6 +51,70 @@ their own account, so there's always at least one admin left.
   controls for viewers
 - `database.db` — SQLite database file (created automatically, git-ignored)
 
+## Deploying to Render
+
+This repo is ready to deploy to [Render](https://render.com) as-is — it
+includes a `Procfile`, a `render.yaml` blueprint, `gunicorn` (production
+server), and a Postgres driver (`psycopg2-binary`).
+
+**Important:** don't rely on plain SQLite in production here — Render's
+free web service filesystem is wiped on every redeploy/restart, so a
+`database.db` file (and every team/user/result in it) would disappear.
+Use Render's free Postgres database instead (both options below set this
+up for you).
+
+### Option A — One-click Blueprint (easiest)
+
+1. Push this repo to GitHub (see "Pushing to GitHub" below if you haven't).
+2. In Render, click **New +** → **Blueprint**, and point it at your GitHub repo.
+3. Render reads `render.yaml` and automatically creates:
+   - A free Postgres database (`pcte-basketball-db`)
+   - A free web service (`pcte-basketball`) wired to that database via
+     `DATABASE_URL`, with a random `SECRET_KEY` generated for you
+4. Click **Apply** — Render builds and deploys automatically. Your app will
+   be live at something like `https://pcte-basketball.onrender.com`.
+
+### Option B — Manual setup
+
+1. Push this repo to GitHub.
+2. In Render: **New +** → **PostgreSQL** → create a free database. Copy its
+   **Internal Database URL**.
+3. In Render: **New +** → **Web Service** → connect your GitHub repo.
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `gunicorn app:app`
+   - **Environment Variables:**
+     - `DATABASE_URL` = the Postgres URL you copied
+     - `SECRET_KEY` = any random string (Render can generate one for you)
+4. Click **Create Web Service**. Render builds and deploys automatically.
+
+### After it's deployed
+
+- Visit your Render URL, log in with the default admin account
+  (`admin` / `admin123`), and **change that password immediately** from
+  the Users page.
+- Every future `git push` to your connected branch triggers an automatic
+  redeploy on Render.
+- Your existing GitHub Pages site (a static-only page) can't run this
+  Flask app — GitHub Pages has no way to execute Python. Point people to
+  the Render URL instead, or set up a custom domain in Render's settings
+  if you want a nicer URL than `*.onrender.com`.
+
+## Pushing to GitHub
+
+```bash
+cd Basketball_SQL
+git init                      # skip if already a git repo
+git add .
+git commit -m "Add user roles and Render deployment config"
+git branch -M main
+git remote add origin https://github.com/<your-username>/<your-repo>.git
+git push -u origin main
+```
+
+If the remote already exists and has commits, use `git pull --rebase
+origin main` first, or just `git add . && git commit -m "..." && git push`
+if it's already set up.
+
 ## Switching to MySQL
 
 By default the app uses SQLite. To use MySQL instead:
